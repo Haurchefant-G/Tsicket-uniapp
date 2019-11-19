@@ -122,7 +122,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
 //
 //
 //
@@ -192,7 +192,33 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 //
 //
 //
-var _default =
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+var app = getApp();var _default =
+
 {
   data: function data() {
     return {
@@ -206,18 +232,39 @@ var _default =
         location: '活动地点',
         start: '2019年xx月xx日',
         end: '',
-        orgnizationid: 100,
-        orgnizationname: 'xx学生会',
+        sponsorid: 100,
+        sponsorname: 'xx学生会',
         type: 1,
         state: 200 },
 
+      like: false,
       current: 0,
       tabs: [
-      "介绍", "动态"] };
+      "介绍", "动态"],
+
+      sponsor: {
+        avatarUrl: '',
+        name: 'xx学生会' },
+
+      message: {} };
+
 
 
   },
-  onLoad: function onLoad() {
+  onLoad: function onLoad(option) {
+    console.log(option);
+    // uni.request({
+    // 	url: 'http://154.8.167.168:8080', //仅为示例，并非真实接口地址。
+    // 	data: {
+    // 		id: option.id
+    // 	},
+    // 	header: {
+    // 		'content-type': 'application/json' //自定义请求头信息
+    // 	},
+    // 	success: (res) => {
+    // 		console.log(res.data);
+    // 	}
+    // });
     return 0;
   },
   methods: {
@@ -229,7 +276,29 @@ var _default =
     },
     swiperChange: function swiperChange(e) {
       this.current = e.detail.current;
+    },
+    reserve: function reserve() {
+      uni.request({
+        url: 'http://154.8.167.168:8080', //仅为示例，并非真实接口地址。
+        data: {
+          activityid: this.id,
+          userid: app.globalData.userInfo },
+
+        header: {
+          'content-type': 'application/json' //自定义请求头信息
+        },
+        success: function success(res) {
+          console.log(res.data);
+        } });
+
+    },
+    share: function share() {
+
+    },
+    like: function like() {
+
     } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 
