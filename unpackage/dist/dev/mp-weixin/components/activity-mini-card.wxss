@@ -1,26 +1,29 @@
 
-.activity-mini-card{
+.activity-mini-card {
 	width: 100%;
 	margin-bottom: 40rpx;
+	height: 250rpx;
+	border-radius: 20rpx 20rpx 20rpx 20rpx;
+	/* background-color: #007AFF; */
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	-webkit-backdrop-filter: blur(10rpx);
+	        backdrop-filter: blur(10rpx);
 }
 .collapse {
 	width: 100%;
 	padding: 40rpx 40rpx 40rpx 40rpx;
 }
 .imgcard {
-	position: absolute;
-	width: 100%;
+	width: inherit;
 	height: 250rpx;
 	border-radius: 20rpx 20rpx 20rpx 20rpx;
-	z-index: -1;
 }
 .card-back {
-	position: absolute;
-	width: 100%;
+	width: inherit;
 	height: 250rpx;
 	border-radius: 20rpx 20rpx 20rpx 20rpx;
-	background-color: #007AFF;
-	z-index: -2;
+	/* background-color: #007AFF; */
 }
 .line-round {
 	margin-top: 5rpx;
@@ -30,25 +33,19 @@
 	border-radius: 5rpx 5rpx 5rpx 5rpx;
 	background-color: gainsboro;
 }
-.info {
-	height: 250rpx;
-}
 .info-flex {
 	height: 190rpx;
 }
 .flex-column {
 	display: -webkit-box;
 	display: -webkit-flex;
-	display: -ms-flexbox;
 	display: flex;
 	-webkit-box-orient: vertical;
 	-webkit-box-direction: normal;
 	-webkit-flex-direction: column;
-	    -ms-flex-direction: column;
 	        flex-direction: column;
 	-webkit-box-pack: justify;
 	-webkit-justify-content: space-between;
-	    -ms-flex-pack: justify;
 	        justify-content: space-between;
 }
 .toolbar {
@@ -61,11 +58,30 @@
 .like {
 	font-size: 60rpx;
 }
-.cuIcon-likefill {
-	-webkit-transition: opacity 1s ease-in 0s;
-	-o-transition: opacity 1s ease-in 0s;
-	transition: opacity 1s ease-in 0s;
+.cuIcon-likefill.likefill {
+	-webkit-transition: all 0.3s ease-in 0s;
+	transition: all 0.3s ease-in 0s;
+	color: #DD514C;
+	opacity: 1;
 }
-
-
+.cuIcon-likefill {
+	-webkit-transition: all 0.3s ease-in 0s;
+	transition: all 0.3s ease-in 0s;
+	color: #FFFFFF;
+	position: relative;
+	left: 60rpx;
+	opacity: 0;
+}
+.cuIcon-like.likefill {
+	-webkit-transition: all 0.3s ease-in 0s;
+	transition: all 0.3s ease-in 0s;
+	color: #DD514C;
+	opacity: 0;
+}
+.cuIcon-like {
+	-webkit-transition: all 0.3s ease-in 0s;
+	transition: all 0.3s ease-in 0s;
+	color: #FFFFFF;
+	opacity: 1;
+}
 

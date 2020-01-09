@@ -16,7 +16,9 @@
 		},
 		{
 			"path": "pages/activity/activity",
-			"style": {}
+			"style": {
+				"enablePullDownRefresh": false
+			}
 		},
 		{
 			"path":"pages/following/following",
@@ -24,7 +26,9 @@
 		},
 		{
 			"path":"pages/sponsor/sponsor",
-			"style":{}
+			"style":{
+				"enablePullDownRefresh": false
+			}
 		},
 		{
 			"path":"pages/like/like",
@@ -34,14 +38,21 @@
 			"path":"pages/history/history",
 			"style":{}
 		}
-	],
+	    ,{
+            "path" : "pages/search/search",
+            "style" : {
+				"enablePullDownRefresh": false
+			}
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "清易票",
 		"navigationBarBackgroundColor": "#81D3F8",
-		"backgroundTextStyle":"light",
-		"backgroundColor" : "#FFFFFF"
-		
+		"backgroundTextStyle":"dark",
+		"backgroundColor" : "#FFFFFF",
+		"backgroundColorTop" : "#81D3F8",
+		"enablePullDownRefresh": true
 	},
 	"tabBar": {
 	    "color": "#D7D7D7",

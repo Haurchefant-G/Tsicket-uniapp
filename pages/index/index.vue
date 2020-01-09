@@ -1,30 +1,31 @@
 <template>
-	<view>
-		<view class="cu-bar search">
-			<text class="cuIcon-roundadd margin-left" style="font-size: 48rpx"></text>
+	<view class="flex-page">
+		<view class="cu-bar search animation-fade">
+			<!-- <text class="cuIcon-roundadd margin-left" style="font-size: 48rpx"></text> -->
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
-				<input @focus="InputFocus" @blur="InputBlur" :adjust-position="false" type="text" placeholder="搜索活动、组织"
-				 confirm-type="search"></input>
+				<input v-model="keyword" @blur="InputBlur" :adjust-position="false" type="text" placeholder="根据活动名,组织搜索活动"
+				 confirm-type="search" @confirm="searchPage"></input>
 			</view>
 			<view class="action">
-				<button class="cu-btn shadow-blur round">搜索</button>
+				<button class="cu-btn shadow-blur round" @click="searchPage">搜索</button>
 			</view>
 		</view>
 		<swiper class="card-swiper" :class="dotStyle?'square-dot':'round-dot'" :indicator-dots="true" :circular="true"
 		 :autoplay="true" interval="5000" duration="500" @change="cardSwiper" indicator-color="#8799a3"
 		 indicator-active-color="#0081ff">
 			<swiper-item v-for="(item,index) in swiperList" :key="index" :class="cardCur==index?'cur':''" @click="swiperActivity">
-				<view class="swiper-item">
-					<image :src="item.url" mode="aspectFill" v-if="item.type=='image'"></image>
-					<video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type=='video'"></video>
+				<view class="swiper-item" :class="reload ? 'animation-fade' : '' ">
+					<image :src="item.img_url" mode="aspectFill"></image>
+					<!-- v-if="item.type=='image'" <video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type=='video'"></video> -->
 				</view>
 			</swiper-item>
 		</swiper>
 		<view class="padding">
-			<scroll-view>
-				<activity-mini-card v-for="(item,index) in activitylist" :key="index" :activity="item" @like="like" @clickCard="activityPage"></activity-mini-card>
-			</scroll-view>
+			<view class="flex-column">
+				<activity-mini-card v-for="(item,index) in activitylist" :class="[item.delay?'animation-slide-bottom':'']" :style="[{animationDelay: item.delay}]"
+				 :key="index" :activity="item" @like="like(index)" @clickCard="activityPage"></activity-mini-card>
+			</view>
 		</view>
 	</view>
 	<!-- <view class="content">
@@ -37,179 +38,176 @@
 
 <script>
 	const app = getApp()
-	
+
 	export default {
 		data() {
 			return {
+				keyword: '',
+				scrollTop: 0,
+				activityindex: 0,
+				reload: false,
 				cardCur: 0,
-				swiperList: [{
-					id: 0,
-					type: 'image',
-					url: ''
-					// url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big37006.jpg',
-				}, {
-					id: 1,
-					type: 'image',
-					url: ''
-					// url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big39000.jpg'
-				}, {
-					id: 2,
-					type: 'image',
-					url: ''
-					// url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg'
-				}],
+				more: true,
+				swiperList: [],
 				dotStyle: false,
-				towerStart: 0,
-				direction: '',
 				url: "/static/cardback0.jpg",
-				activitylist: [{
-						id: 0,
-						name: '活动名',
-						intro: '活动介绍语',
-						tickets: 80,
-						location: '活动地点',
-						start: '2019年xx月xx日',
-						end: '',
-						sponsorid: 100,
-						sponsorname: 'xx学生会',
-						type: 1,
-						state: 200,
-						like: true
-					},
-					{
-						id: 1,
-						name: '活动名1',
-						intro: '活动介绍语',
-						tickets: 80,
-						location: '活动地点',
-						start: '2019年xx月xx日',
-						end: '',
-						sponsorid: 100,
-						sponsorname: 'xx学生会',
-						type: 1,
-						state: 200,
-						like: true
-					},
-					{
-						id: 2,
-						name: '活动名2',
-						intro: '活动介绍语',
-						tickets: 80,
-						location: '活动地点',
-						start: '2019年xx月xx日',
-						end: '',
-						sponsorid: 100,
-						sponsorname: 'xx学生会',
-						type: 1,
-						state: 200,
-						like: true
-					},
-					{
-						id: 3,
-						name: '活动名3',
-						intro: '活动介绍语',
-						tickets: 80,
-						location: '活动地点',
-						start: '2019年xx月xx日',
-						end: '',
-						sponsorid: 100,
-						sponsorname: 'xx学生会',
-						type: 1,
-						state: 200,
-						like: true
-					},
-					{
-						id: 4,
-						name: '活动名4',
-						intro: '活动介绍语',
-						tickets: 80,
-						location: '活动地点',
-						start: '2019年xx月xx日',
-						end: '',
-						sponsorid: 100,
-						sponsorname: 'xx学生会',
-						type: 1,
-						state: 200,
-						like: true
-					},
-					{
-						id: 5,
-						name: '活动名5',
-						intro: '活动介绍语',
-						tickets: 80,
-						location: '活动地点',
-						start: '2019年xx月xx日',
-						end: '',
-						sponsorid: 100,
-						sponsorname: 'xx学生会',
-						type: 1,
-						state: 200,
-						like: true
-					},
-					{
-						id: 6,
-						name: '活动名6',
-						intro: '活动介绍语',
-						tickets: 80,
-						location: '活动地点',
-						start: '2019年xx月xx日',
-						end: '',
-						sponsorid: 100,
-						sponsorname: 'xx学生会',
-						type: 1,
-						state: 200,
-						like: true
-					}
-				],
+				activitylist: [],
 				current: 0,
 				tabs: [
 					"介绍", "动态"
-				],
-				sponsor: {
-					avatarUrl: '',
-					name: 'xx学生会'
-				},
-				message: {
-
-				}
+				]
 			};
 		},
 		onLoad() {
+			console.log(app.globalData.cookie)
+			if (app.globalData.cookie != '') {
+				console.log('indexonload')
+				this.loadpage()
+			} else {
+				console.log('nocookie')
+				app.globalData.cookieReadyCallback = this.loadpage
+			}
+
+			uni.showShareMenu({})
 
 		},
+		onPageScroll(res) {
+			this.scrollTop = res.scrollTop
+		},
+		onPullDownRefresh() {
+			this.more = true
+			this.activityindex = 0
+			this.loadpage()
+		},
+		onReachBottom() {
+			this.loadactivity(false)
+		},
+		onShareAppMessage(res) {
+			return {
+				title: app.globalData.sharetitle,
+				path: '/pages/index/index',
+				imageUrl: app.globalData.shareimg
+			}
+		},
 		methods: {
+			loadpage() {
+				uni.showLoading({
+					title: '加载中'
+				})
+				uni.request({
+					url: app.globalData.apiurl + 'users/broadcast',
+					header: {
+						'content-type': 'application/json', //自定义请求头信息
+						'cookie': app.globalData.cookie
+					},
+					success: (res) => {
+						this.swiperList = []
+						this.reload = false
+						console.log(res)
+						console.log(res.data);
+						this.swiperList = res.data.list
+						this.reload = true
+						if (this.activitylist != []) {
+							uni.stopPullDownRefresh()
+						}
+					}
+				})
+				this.loadactivity(true)
+			},
+			loadactivity(reload) {
+				if (this.more) {
+					uni.request({
+						url: app.globalData.apiurl + 'users/index',
+						data: {
+							index: this.activityindex
+						},
+						header: {
+							'content-type': 'application/json', //自定义请求头信息
+							'cookie': app.globalData.cookie
+						},
+						success: (res) => {
+							console.log(res)
+							console.log(res.data)
+							if (res.data.events) {
+								res.data.events.forEach((res, index) => {
+									//res.like = true
+									// if(res.event_picture != '' ) {
+									// 	res.img_url = res.event_picture
+									// } else 
+									if (!res.img_url || (res.img_url == '')) {
+										res.img_url = app.globalData.backimg[parseInt('11' + res.event_id) % 4]
+									}
+									res.delay = '' + (index + 5) * 0.1 + 's'
+									setTimeout(() => {
+										res.delay = undefined
+									}, (index + 11) * 100)
+								})
+								if (reload) {
+									this.activitylist = []
+									uni.showToast({
+										title: "加载成功",
+										icon: 'none'
+									})
+								} else {
+									setTimeout(() => {
+										uni.pageScrollTo({
+											scrollTop: this.scrollTop + 300,
+											duration: 500,
+										})
+										console.log("top" + this.scrollTop)
+									}, 200)
+								}
+								this.activitylist = this.activitylist.concat(res.data.events)
+								this.activityindex += res.data.events.length
+								this.more = res.data.more
+								console.log(this.activitylist)
+							} else {
+								uni.showToast({
+									title: "加载失败",
+									icon: 'none'
+								})
+							}
+							if (this.swiperList != []) {
+								uni.stopPullDownRefresh()
+							}
+						}
+					})
+				}
+			},
 			cardSwiper(e) {
 				this.cardCur = e.detail.current
 			},
 			swiperActivity(e) {
-				this.activityPage(this.swiperList[this.cardCur].id)
+				this.activityPage(this.swiperList[this.cardCur].event_id)
 			},
 			activityPage(id) {
 				uni.navigateTo({
-					url: "../activity/activity?id=" + id
+					url: "../activity/activity?id=" + id,
 				})
 			},
-			like(id) {
+			InputBlur(e) {
+				console.log(e)
+			},
+			searchPage() {
+				console.log(this.keyword)
+				uni.navigateTo({
+					url: "../search/search?keyword=" + this.keyword
+				})
+			},
+			like(index) {
 				uni.request({
-					url: 'http://2019-a18.iterator-traits.com:8080/apis/users/like',
+					url: app.globalData.apiurl + 'users/like/' + this.activitylist[index].event_id,
 					method: 'POST',
-					data: {
-						openid: app.globalData.openid,
-						eventid: id,
-						session: '',
-					},
 					header: {
-						'content-type': 'application/json' //自定义请求头信息
+						'content-type': 'application/json', //自定义请求头信息
+						'cookie': app.globalData.cookie
 					},
 					success: (res) => {
-						console.log(res.data);
+						console.log(res.data)
+						console.log(index)
+						this.activitylist[index].like = res.data.like
 					}
 				});
-				var index = this.activitylist.findIndex((item) => {
-					return item.id == id
-				})
-				console.log(index)
-				this.activitylist[index].like = !this.activitylist[index].like
 			}
 		}
 	}
@@ -254,7 +252,6 @@
 	}
 
 	.activity-list {
-
 		padding: 10rpx;
 	}
 </style>

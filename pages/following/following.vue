@@ -1,5 +1,5 @@
 <template>
-	<view class="flex-page">
+	<!-- 	<view class="flex-page">
 		<view class="tabs padding-top">
 			<view class="nav" :current="current" @change="navChange">
 				<scroll-view scroll-x class="bg-white nav">
@@ -21,6 +21,23 @@
 				</swiper>
 			</view>
 		</view>
+	</view> -->
+	<view>
+		<view class="tabs padding-top">
+			<view class="nav" :current="current" @change="navChange">
+				<scroll-view scroll-x class="bg-white nav">
+					<view class="flex text-center">
+						<view class="flex-sub tab" :class="index==current?'tab-choose':''" v-for="(item,index) in tabs" :key="index" @tap="tabSelect"
+						 :data-id="index">
+							{{item}}
+						</view>
+					</view>
+				</scroll-view>
+			</view>
+		</view>
+		<view class="padding flex-column" id="likelist">
+			<follow-list :followlist="followlist" @clickitem="sponsorPage" @follow="follow"></follow-list>
+		</view>
 	</view>
 </template>
 
@@ -30,77 +47,79 @@
 	export default {
 		data() {
 			return {
-				followlist: [{
-						username: 'xx社团',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx学生会',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx社团2',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx学生会2',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx社团3',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx学生会3',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx社团4',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx学生会4',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx社团5',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx学生会5',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx社团6',
-						follow: true,
-						id: 0
-					},
-					{
-						username: 'xx学生会6',
-						follow: true,
-						id: 0
-					}
-				],
+				scrollTop: 0,
+				followlist: [],
+				followindex: 0,
 				current: 0,
+				more: true,
 				tabs: [
 					"关注"
 				]
 			};
 		},
 		onLoad() {
-
+			this.loadpage()
+			uni.showShareMenu({})
+		},
+		onPageScroll(res) {
+			this.scrollTop = res.scrollTop
+		},
+		onPullDownRefresh() {
+			this.followindex = 0
+			this.more = true
+			this.loadpage()
+		},
+		onReachBottom() {
+			this.loadpage()
+		},
+		onShareAppMessage(res) {
+			return {
+				title: app.globalData.sharetitle,
+				path: '/pages/index/index',
+				imageUrl: app.globalData.shareimg
+			}
 		},
 		methods: {
+			loadpage() {
+				if (this.more) {
+					uni.request({
+						url: app.globalData.apiurl + 'users/follow', //仅为示例，并非真实接口地址。
+						data: {
+							index: this.followindex
+						},
+						header: {
+							'content-type': 'application/json', //自定义请求头信息
+							'cookie': app.globalData.cookie
+						},
+						success: (res) => {
+							console.log(res);
+							if (this.followindex == 0) {
+								this.followlist = []
+							}
+							res.data.list.forEach((item, index) => {
+								item.follow = true
+								item.delay = '' + (index + 5) * 0.1 + 's'
+								setTimeout(() => {
+									item.delay = undefined
+								}, (index + 11) * 100)
+							})
+							this.followlist = this.followlist.concat(res.data.list)
+							if (this.followindex != 0) {
+								setTimeout(() => {
+									uni.pageScrollTo({
+										scrollTop: this.scrollTop + 300,
+										duration: 500,
+									})
+									console.log("top" + this.scrollTop)
+								}, 200)
+							}
+							this.more = res.data.more
+							this.followindex += res.data.list.length
+							uni.stopPullDownRefresh()
+						}
+					})
+				}
+			},
 			cardSwiper(e) {
 				this.cardCur = e.detail.current
 			},
@@ -115,26 +134,22 @@
 			},
 			sponsorPage(index) {
 				uni.navigateTo({
-					url: "../sponsor/sponsor?id=" + this.followlist[index].id
+					url: "../sponsor/sponsor?id=" + this.followlist[index].name
 				})
 			},
 			follow(index) {
 				uni.request({
-					url: 'http://2019-a18.iterator-traits.com:8080/apis/users/like', //仅为示例，并非真实接口地址。
+					url: app.globalData.apiurl + 'users/follow/' + this.followlist[index].name, //仅为示例，并非真实接口地址。
 					method: 'POST',
-					data: {
-						openid: app.globalData.openid,
-						sponsorid: this.followlist[index].id
-					},
 					header: {
-						'content-type': 'application/json' //自定义请求头信息
+						'content-type': 'application/json', //自定义请求头信息
+						'cookie': app.globalData.cookie
 					},
 					success: (res) => {
 						console.log(res.data);
-						//this.followlist[index].follow = !this.followlist[index].follow
+						this.followlist[index].follow = res.data.follow
 					}
 				})
-				this.followlist[index].follow = !this.followlist[index].follow
 			}
 		}
 	}
